@@ -15,19 +15,20 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </head>
-<body>
+<body class="bg-light">
 	<!-- Navigation bar -->
 	<?php include('navbar.php'); ?>
 
-	<a href="newmovie.php" id="newmovie">Add a Movie</a>
+	<a href="newmovie.php" id="newmovie">Add a movie</a>
+	<a href="newcategory.php" id="newcateogry">Add a genre</a>
 
 	<?php if($statement->rowCount() === 0): ?>
 			<h2>There are no movies.</h2>
 	<?php else: ?>
 		<?php while($row = $statement->fetch()): ?>
-				<h3 class="posttitle"><a href="fullpost.php?id=<?= $row['MovieID'] ?>"><?= $row['MovieTitle'] ?></a></h3>
-				<a href="movieedit.php?id=<?= $row['MovieID'] ?>" class="edit">edit</a>
-				<p class="postcontent"><?= substr($row['MovieDescription'], 0, 200); ?> <a href="fullpost.php?id=<?= $row['MovieID'] ?>">...Read full description</a></p>
+				<h3><a href="fullmoviedescription.php?id=<?= $row['MovieID'] ?>" class="text-primary"><?= $row['MovieTitle'] ?></a></h3>
+				<a href="movieedit.php?id=<?= $row['MovieID'] ?>" class="text-secondary">edit</a>
+				<p class=""><?= substr($row['MovieDescription'], 0, 200); ?> <a href="fullmoviedescription.php?id=<?= $row['MovieID'] ?>">...Read full description</a></p>
 		<?php endwhile ?>
 	<?php endif ?>
 </body>
