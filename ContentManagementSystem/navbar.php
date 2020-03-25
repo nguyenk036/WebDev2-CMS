@@ -1,5 +1,5 @@
-<nav class="navbar bg-dark navbar-dark">
-	<a class="navbar-brand" href="#" data-toggle="collapse" data-target="#myNavBar">HOME</a>
+<nav class="navbar bg-secondary navbar-dark">
+	<a class="navbar-brand" href="#" data-toggle="collapse" data-target="#myNavBar">WEBFLIX REVIEWS</a>
 
 	<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#myNavBar">
 		<span class="navbar-toggler-icon"></span>

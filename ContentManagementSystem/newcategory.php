@@ -32,12 +32,12 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </head>
-<body class="bg-light">
+<body class="bg-dark">
 	<?php include('navbar.php'); ?>
 
 	<form method="post" action="newcategory.php">
 		<div>
-			<label for="category">Category Name</label>
+			<label for="category" class="text-light">Category Name</label>
         	<input id="category" name="category">
 		</div>
        
@@ -46,6 +46,6 @@
         </div>
     </form>
 
-    <h4><?= $statusMessage ?></h4>
+    <h4 class="text-light"><?= $statusMessage ?></h4>
 </body>
 </html>

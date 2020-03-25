@@ -24,12 +24,12 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </head>
-<body>
+<body class="bg-dark">
 
 	<?php include('navbar.php'); ?>
-	<h3><?= $movie['MovieTitle'] ?></h3>
-	<a href="edit.php?id=<?= $movie['MovieID'] ?>" class="edit">edit</a>
-	<p><?= $movie['MovieDescription'] ?></p>
+	<h3 class="text-light"><?= $movie['MovieTitle'] ?></h3>
+	<a href="edit.php?id=<?= $movie['MovieID'] ?>" class="text-primary">edit</a>
+	<p class="text-light"><?= $movie['MovieDescription'] ?></p>
 
 </body>
 </html>
