@@ -22,6 +22,7 @@
 	<div>
 		<a href="newmovie.php" id="newmovie" class="btn btn-primary">Add a movie</a>
 		<a href="newcategory.php" id="newcateogry" class="btn btn-primary">Add a genre</a>
+		<a href="updatecategory.php" class="btn btn-primary">Edit Genres</a>
 	</div>
 
 	<?php if($statement->rowCount() === 0): ?>
