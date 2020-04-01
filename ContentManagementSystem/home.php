@@ -13,6 +13,11 @@
 </head>
 <body class="bg-dark">
 	<?php include('navbar.php'); ?>
-	<h1 class="text-light">WebFlix Reviews</h1>
+	<div class="jumbotron jumbotron-fluid bg-secondary text-light align-middle">
+	  <div class="container">
+	    <h1 class="display-4">Webflix Reviews</h1>
+	    <p class="lead">A catalogue and collection of community reviews of your favourite movies.</p>
+	  </div>
+	</div>
 </body>
 </html>

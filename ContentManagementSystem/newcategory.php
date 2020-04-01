@@ -37,15 +37,16 @@
 
 	<form method="post" action="newcategory.php">
 		<div>
-			<label for="category" class="text-light">Category Name</label>
-        	<input id="category" name="category">
+			<label for="category" class="text-light d-block m-2">Category Name</label>
+        	<input id="category" name="category" class="d-block m-2">
 		</div>
        
         <div id="buttons">
-        	<input type="submit">
+        	<input type="submit" class="m-2">
         </div>
     </form>
 
-    <h4 class="text-light"><?= $statusMessage ?></h4>
+    <h4 class="text-light m-2"><?= $statusMessage ?></h4>
+    <a href="movies.php" class="btn btn-dark d-block m-2">Return to Movies</a>
 </body>
 </html>

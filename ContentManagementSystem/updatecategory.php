@@ -50,5 +50,7 @@
         	<input type="submit" name="action" value="Delete">
         </div>
 	</form>
+
+	<a href="movies.php" class="btn btn-dark d-block m-2">Return to Movies</a>
 </body>
 </html>

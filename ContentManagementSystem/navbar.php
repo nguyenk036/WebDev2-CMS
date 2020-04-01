@@ -1,9 +1,9 @@
 <nav class="navbar bg-secondary navbar-dark">
 	<a class="navbar-brand" href="#" data-toggle="collapse" data-target="#myNavBar">WEBFLIX REVIEWS</a>
-
-	<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#myNavBar">
-		<span class="navbar-toggler-icon"></span>
-	</button>
+	<form class="form-inline" method="get" action="searchresults.php">
+	 	<input class="form-control mr-sm-2" name="searchbar" type="search" placeholder="Search" aria-label="Search">
+	  	<button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
+	</form>
 
 	<div class="collapse navbar-collapse" id="myNavBar">
 		<ul class="navbar-nav">
