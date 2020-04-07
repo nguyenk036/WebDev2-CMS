@@ -13,14 +13,15 @@
 	$statusMessage = "";
 
 
-	function file_upload_path($original_filename, $upload_subfolder_name = 'movieImages') {
-       $current_folder = dirname(__FILE__);
-       $newfilename = str_replace(' ', '', $_POST['title']) . pathinfo($original_filename, PATHINFO_EXTENSION);
-       
-       $path_segments = [$current_folder, $upload_subfolder_name, $newfilename];
-       
-       return join(DIRECTORY_SEPARATOR, $path_segments);
-    }
+	function file_upload_path($original_filename, $upload_subfolder_name = 'savedImages\movieImages') {
+	       $current_folder 		= dirname(__FILE__);
+	       $title_no_whitespace = str_replace(' ', '', $_POST['title']);
+	       $new_file_name 		= $title_no_whitespace . '.' . pathinfo($original_filename, PATHINFO_EXTENSION);
+	       
+	       $path_segments 		= [$current_folder, $upload_subfolder_name, $new_file_name];
+	       
+	       return join(DIRECTORY_SEPARATOR, $path_segments);
+	    }
 
     function file_is_acceptable($temporary_path, $new_path) {
         $allowed_mime_types      = ['image/gif', 'image/jpeg', 'image/png'];
@@ -35,36 +36,53 @@
         return $file_extension_is_valid && $mime_type_is_valid;
     }
 
-    $image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
-
+    
 	if(isset($_POST) && !empty($_POST['title']) && !empty($_POST['description'])){
 		$title 			= filter_input(INPUT_POST, 'title', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		$description 	= filter_input(INPUT_POST, 'description', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		$genre 			= filter_input(INPUT_POST, 'genre', FILTER_VALIDATE_INT);
-		$imageRef		= "";
+		$ImageRef		= "";
+
+		$image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
 
 		// Image Upload
 		if ($image_upload_detected) { 
 	        $image_filename        = $_FILES['image']['name'];
 	        $temporary_image_path  = $_FILES['image']['tmp_name'];
 	        $new_image_path        = file_upload_path($image_filename);
+	        
 	        if (file_is_acceptable($temporary_image_path, $new_image_path)) {
 	        		move_uploaded_file($temporary_image_path, $new_image_path);
-		        	$image = new ImageResize($new_image_path);
-		        	$image->resizeToWidth(400);
-		        	$image->save($new_image_path . '_boxart' . pathinfo($new_image_path, PATHINFO_EXTENSION));
 
-		        	$imageRef = $new_image_path . '_boxart' . pathinfo($new_image_path, PATHINFO_EXTENSION);
+		        	$image = new ImageResize($new_image_path);
+		        	$image->resize(640, 400, true);
+		        	$image->save($new_image_path);
+
+		        	$ImageRef = pathinfo($new_image_path, PATHINFO_BASENAME);
+
+		        	$query 	   = "INSERT INTO movie (GenreID, MovieTitle, MovieDescription, ImageRef) VALUES (:genre, :title, :description, :ImageRef)";
+
+			    	$statement = $db->prepare($query);
+			    	$statement->bindValue(':genre', $genre);
+			    	$statement->bindValue(':title', $title);
+			    	$statement->bindValue(':description', $description);
+			    	$statement->bindValue(':ImageRef', $ImageRef);
+
+			    	$statement->execute();
 	        }
 	    }
+	    else{
 
-		$createMovie = "INSERT INTO movie (GenreID, MovieTitle, MovieDescription, ImageRef) VALUES (:genre, :title, :description, :imageRef)";
-		$statement 	= $db->prepare($createMovie);
+	    	$createMovie = "INSERT INTO movie (GenreID, MovieTitle, MovieDescription) VALUES (:genre, :title, :description)";
+			$statement 	= $db->prepare($createMovie);
 
-		$statement->bindValue(':title', $title);
-		$statement->bindValue(':description', $description);
-		$statement->bindValue(':genre', $genre);
-		$statement->bindValue(':imageRef', $imageRef);
+			$statement->bindValue(':title', $title);
+			$statement->bindValue(':description', $description);
+			$statement->bindValue(':genre', $genre);
+
+			$statement->execute();
+	    }
+		
 
 		if($statement->execute()){
 			$statusMessage = "Successfully created";
@@ -88,7 +106,7 @@
 <body class="bg-dark text-light">
 	<?php include('navbar.php'); ?>
 
-	<form method="post" action="newmovie.php">
+	<form method="post" action="newmovie.php" enctype="multipart/form-data">
 		<div>
 			<label for="title" class="d-block m-2">Title</label>
         	<input id="title" name="title" class="d-block m-2">

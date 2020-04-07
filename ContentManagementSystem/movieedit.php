@@ -10,6 +10,12 @@
 	$statementarray = $db->prepare($getGenres);
 	$statementarray->execute();
 
+	$getImageRef = "SELECT ImageRef FROM movie WHERE MovieID = " . $_GET['id'];
+	$imgref = $db->prepare($getImageRef);
+	$imgref->execute();
+	$rowImage = $imgref->fetch();
+
+	$errorMessage = "";
 
 	if($_POST && $_POST['action'] == 'Update' && !empty($_POST['title']) && !empty($_POST['description']) && !empty($_POST['id'])){
 		$title 			= filter_input(INPUT_POST, 'title', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -17,13 +23,12 @@
 		$genre			= filter_input(INPUT_POST, 'genre', FILTER_SANITIZE_NUMBER_INT);
 		$id 			= filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 		
-		$image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
-		$ImageRef 			   = "";
-
 		function file_upload_path($original_filename, $upload_subfolder_name = 'savedImages\movieImages') {
-	       $current_folder = dirname(__FILE__);
+	       $current_folder 		= dirname(__FILE__);
+	       $title_no_whitespace = str_replace(' ', '', $_POST['title']);
+	       $new_file_name 		= $title_no_whitespace . '.' . pathinfo($original_filename, PATHINFO_EXTENSION);
 	       
-	       $path_segments = [$current_folder, $upload_subfolder_name, basename($original_filename)];
+	       $path_segments 		= [$current_folder, $upload_subfolder_name, $new_file_name];
 	       
 	       return join(DIRECTORY_SEPARATOR, $path_segments);
 	    }
@@ -41,40 +46,66 @@
 	        return $file_extension_is_valid && $mime_type_is_valid;
 	    }
 
-	    // Image Upload
+	    //Image Variables
+	    $image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
+		$ImageRef 			   = "";
+		$image_filename        = $_FILES['image']['name'];
+        $temporary_image_path  = $_FILES['image']['tmp_name'];
+        $new_image_path        = file_upload_path($image_filename);
+
+	    // If an image upload is detected, update ImageRef column with image filename
 		if ($image_upload_detected) { 
-	        $image_filename        = $_FILES['image']['name'];
-	        $temporary_image_path  = $_FILES['image']['tmp_name'];
-	        $new_image_path        = file_upload_path($image_filename);
 	        
 	        if (file_is_acceptable($temporary_image_path, $new_image_path)) {
+
 	        		move_uploaded_file($temporary_image_path, $new_image_path);
 
 		        	$image = new ImageResize($new_image_path);
-		        	$image->resize(640, 400);
+		        	$image->resize(640, 400, true);
 		        	$image->save($new_image_path);
 
-		        	$ImageRef = $image_filename;
+		        	$ImageRef = pathinfo($new_image_path, PATHINFO_BASENAME);
 
-		        	$query 	= "INSERT INTO images (MovieID, imageName) VALUES (:id, :ImageRef)";
+		        	$query 	   = "UPDATE movie SET ImageRef = :ImageRef WHERE MovieID = :id";
 			    	$statement = $db->prepare($query);
 			    	$statement->bindValue(':id', $id);
 			    	$statement->bindValue(':ImageRef', $ImageRef);
 
 			    	$statement->execute();
+
 	        }
+	    }
+	    else if($_POST['checkbox'] == 'Checked'){
+
+	    	$query = "UPDATE movie SET ImageRef = NULL WHERE MovieID = :id";
+	    	$statement = $db->prepare($query);
+	    	$statement->bindValue(':id', $id);
+	    	$statement->execute();
+
+	    	$imageNameQuery = "SELECT ImageRef FROM movie WHERE MovieID = :id LIMIT 1";
+	    	$statement1 = $db->prepare($imageNameQuery);
+	    	$statement1->bindValue(':id', $id);
+	    	$statement1->execute();
+	    	$imageName = $statement1->fetch();
+
+	    	$imagePath = 'savedimages/movieImages/' . $imageName['ImageRef'];
+	    	fclose($imagePath);
+	    	chmod($imagePath, 0644);
+
+	    	unlink($imagePath);
+	    	
 	    }
 
 	    //Descriptions wont update..
-		$query1 		= "UPDATE movie SET GenreID = :genre, MovieTitle = :title, MovieDescription = :description, ImageRef = :ImageRef WHERE MovieID = :id";
-		$statement1 	= $db->prepare($query1);
-		$statement1->bindValue(':title', $title);
-		$statement1->bindValue(':description', $description);
-		$statement1->bindValue(':id', $id, PDO::PARAM_INT);
-		$statement1->bindValue(':genre', $genre);
-		$statement1->bindValue(':ImageRef', $ImageRef);
+		$query 		= "UPDATE movie SET GenreID = :genre, MovieTitle = :title, MovieDescription = :description WHERE MovieID = :id";
+		$statement 	= $db->prepare($query1);
+		$statement->bindValue(':title', $title);
+		$statement->bindValue(':description', $description);
+		$statement->bindValue(':id', $id, PDO::PARAM_INT);
+		$statement->bindValue(':genre', $genre);
+		$statement->bindValue(':ImageRef', $ImageRef);
 
-		$statement1->execute();
+		$statement->execute();
 
 		header("Location: movieedit.php?id={$id}");
 		exit;
@@ -144,6 +175,12 @@
 				<label for="image" class="d-block m-2">Filename:</label>
 	        	<input type="file" name="image" id="image" class="d-block m-2 btn btn-dark"/>
 			</div>
+			<?php if($rowImage['ImageRef'] != NULL): ?>
+				<div>
+					<label for="checkbox" class="m-2">Remove <?= $rowImage['ImageRef'] ?>?</label>
+	        		<input type="checkbox" name="checkbox" class="m-2" value="Checked">
+				</div>
+			<?php endif ?>
 	        <div id="buttons">
 	        	<input type="submit" name="action" value="Update" class="m-2 btn btn-dark">
 	        	<input type="submit" name="action" value="Delete" class="m-2 btn btn-dark">
@@ -152,6 +189,8 @@
 	<?php elseif(!$id || !$title || !$description): ?>
 		<p>ERROR: Title and/or content cannot be empty, or may contain inappropriate characters.  Please try again.</p>
 	<?php endif ?>
+
+	<p><?= $errorMessage ?></p>
 	
 	<a href="movies.php" class="btn btn-dark d-block m-2">Return to Movies</a>
 </body>

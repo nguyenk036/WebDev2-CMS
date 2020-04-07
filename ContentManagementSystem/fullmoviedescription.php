@@ -2,6 +2,11 @@
 
 	require 'db_connect.php';
 
+	$getImageRef = "SELECT ImageRef FROM movie WHERE MovieID = " . $_GET['id'];
+	$imgref = $db->prepare($getImageRef);
+	$imgref->execute();
+	$rowImage = $imgref->fetch();
+
 	if(isset($_GET['id']) || isset($_POST)){
 		$id 		= filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
@@ -51,6 +56,9 @@
 	<?php include('navbar.php'); ?>
 	<h3 class="d-inline m-2"><?= $movie['MovieTitle'] ?></h3>
 	<a href="movieedit.php?id=<?= $movie['MovieID'] ?>" class="btn btn-secondary btn-sm m-2">edit</a>
+	<?php if($rowImage['ImageRef'] != NULL): ?>
+		<img src="savedimages/movieImages/<?= $movie['ImageRef'] ?>" alt="MoviePoster" class="d-block rounded border border-white m-2" >
+	<?php endif?>
 	<p class="font-weight-light m-2"><?= $movie['MovieDescription'] ?></p>
 
 	<div>
