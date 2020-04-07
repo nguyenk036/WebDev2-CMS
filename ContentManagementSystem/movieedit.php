@@ -6,14 +6,12 @@
 	include 'ImageResize.php';
 	use \Gumlet\ImageResize;
 
-
-
 	$getGenres = "SELECT * FROM Genre";
 	$statementarray = $db->prepare($getGenres);
 	$statementarray->execute();
 
 	function file_upload_path($original_filename, $upload_subfolder_name = 'movieImages') {
-       $current_folder = dirname(__FILE__);
+       $current_folder = dirname(__DIR__);
        $newfilename = str_replace(' ', '', $_POST['title']) . pathinfo($original_filename, PATHINFO_EXTENSION);
        
        $path_segments = [$current_folder, $upload_subfolder_name, $newfilename];
@@ -40,7 +38,7 @@
 		$description 	= filter_input(INPUT_POST, 'description', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		$genre			= filter_input(INPUT_POST, 'genre', FILTER_SANITIZE_NUMBER_INT);
 		$id 			= filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-		$ImageRef 		= file_upload_path($_FILES['image']['name']) . '_boxart.' . pathinfo(file_upload_path($_FILES['image']['name']), PATHINFO_EXTENSION);
+		$ImageRef 		= "";
 
 		$image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
 
@@ -54,16 +52,23 @@
 		        	$image = new ImageResize($new_image_path);
 		        	$image->resizeToWidth(400);
 		        	$image->save($new_image_path . '_boxart.' . pathinfo($new_image_path, PATHINFO_EXTENSION));
+
+		        	$ImageRef = str_replace(' ', '', $_POST['title']) . pathinfo($image_filename, PATHINFO_EXTENSION);
+
+		        	$query = "INSERT INTO images (MovieID, path) VALUES (:id, :ImageRef)";
+		        	$statement = $db->prepare($query);
+		        	$statement->bindValue(':id', $id, PDO::PARAM_INT);
+		        	$statement->bindValue(':ImageRef', $ImageRef);
+		        	$statement->execute();
 	        }
 	    }
 
-		$query 		= "UPDATE movie SET GenreID = :genre, MovieTitle = :title, MovieDescription = :description, ImageRef = :imageRef WHERE MovieID = :id";
+		$query 		= "UPDATE movie SET GenreID = :genre, MovieTitle = :title, MovieDescription = :description WHERE MovieID = :id";
 		$statement 	= $db->prepare($query);
 		$statement->bindValue(':title', $title);
 		$statement->bindValue(':description', $description);
 		$statement->bindValue(':id', $id, PDO::PARAM_INT);
 		$statement->bindValue(':genre', $genre, PDO::PARAM_INT);
-		$statement->bindValue(':imageRef', $imageRef);
 
 		$statement->execute();
 
@@ -127,7 +132,7 @@
 				<label for="genre" class="d-block m-2">Genre</label>
 	        	<select name="genre" class="d-block m-2">
 	        		<?php foreach ($statementarray as $genre): ?>
-	        			<option value="<?php echo $genre[0] ?>"><?php echo $genre[1] ?></option>
+	        			<option value="<?php $genre['GenreID'] ?>"><?php echo $genre['CategoryName'] ?></option>
 	        		<?php endforeach ?>
 	        	</select>
 			</div>
