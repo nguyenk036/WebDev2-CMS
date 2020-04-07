@@ -4,6 +4,10 @@
 	$getMovies 	= "SELECT * FROM movie";
 	$statement 	= $db->prepare($getMovies);
 	$statement->execute();
+
+	$getImages = "SELECT * FROM images";
+	$statement1 = $db->prepare($getImages);
+	$statement1->execute();
 ?>
 
 <!DOCTYPE html>
@@ -44,7 +48,7 @@
 						<?php if(empty($row['ImageRef'])): ?>
 							<a href="fullmoviedescription.php?id=<?= $row['MovieID'] ?>"><img src="no-img-placeholder.png" class="card-img-top" alt="#"></a>
 						<?php else: ?>
-							<a href="fullmoviedescription.php?id=<?= $row['MovieID'] ?>"><img src="<?= $row['ImageRef'] ?>" class="card-img-top" alt="#"></a>
+							<a href="fullmoviedescription.php?id=<?= $row['MovieID'] ?>"><img src="savedImages/movieImages/<?= $row['ImageRef'] ?>" class="card-img-top" alt="#"></a>
 						<?php endif ?>
 						<div class="card-body">
 							<h5 class="card-title"><a href="fullmoviedescription.php?id=<?= $row['MovieID'] ?>" class="text-primary"><?= $row['MovieTitle'] ?></a></h5>
