@@ -57,9 +57,9 @@
 	<h3 class="d-inline m-2"><?= $movie['MovieTitle'] ?></h3>
 	<a href="movieedit.php?id=<?= $movie['MovieID'] ?>" class="btn btn-secondary btn-sm m-2">edit</a>
 	<?php if($rowImage['ImageRef'] != NULL): ?>
-		<img src="savedimages/movieImages/<?= $movie['ImageRef'] ?>" alt="MoviePoster" class="d-block rounded border border-white m-2" >
+		<img src="savedimages/movieImages/<?= $movie['ImageRef'] ?>" alt="MoviePoster" class="d-block rounded border border-white m-2 float-left">
 	<?php endif?>
-	<p class="font-weight-light m-2"><?= $movie['MovieDescription'] ?></p>
+	<p class="font-weight-light m-2 clearfix"><?= $movie['MovieDescription'] ?></p>
 
 	<div>
 		<h4 class="m-2">Leave a comment below:</h4>

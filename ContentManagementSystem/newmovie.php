@@ -15,7 +15,7 @@
 
 	function file_upload_path($original_filename, $upload_subfolder_name = 'savedImages\movieImages') {
 	       $current_folder 		= dirname(__FILE__);
-	       $title_no_whitespace = str_replace(' ', '', $_POST['title']);
+	       $title_no_whitespace = preg_replace("/[^a-zA-Z0-9]/", "", $_POST['title'])
 	       $new_file_name 		= $title_no_whitespace . '.' . pathinfo($original_filename, PATHINFO_EXTENSION);
 	       
 	       $path_segments 		= [$current_folder, $upload_subfolder_name, $new_file_name];
