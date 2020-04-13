@@ -1,5 +1,6 @@
 <?php
-	require('db_connect.php');
+
+	include 'session_connection.php';
 
 	$getMovies 	= "SELECT * FROM movie";
 	$statement 	= $db->prepare($getMovies);

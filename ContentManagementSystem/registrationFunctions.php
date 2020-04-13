@@ -1,18 +1,17 @@
 <?php
-	
-	class RegistrationFunctions{
 
+	class RegistrationFunctions{
 
 		//Creates new user registration
 		function Register($name, $email, $username, $password){
 			try{
 				$db = DB();
-
-				$query = $db->prepare("INSERT INTO users (Username, Password, Name, Email) VALUES (:username, :password, :name, :email)")
+				$query = $db->prepare("INSERT INTO users (Username, Password, Name, Email) VALUES (:username, :password, :name, :email)");
 				$query->bindParam("name", $name, PDO::PARAM_STR);
 				$query->bindParam("email", $email, PDO::PARAM_STR);
 				$query->bindParam("username", $username, PDO::PARAM_STR);
-	            $enc_password = hash('sha256', $password);
+	            // $enc_password = hash('sha256', $password);
+	            $enc_password = password_hash($password, PASSWORD_DEFAULT);
 	            $query->bindParam("password", $enc_password, PDO::PARAM_STR);
 	            $query->execute();
 
@@ -45,7 +44,7 @@
 		//Check for email validity and availability
 		function isEmail($email){
 			try {
-	            $db = DB();
+				$db = DB();
 	            $query = $db->prepare("SELECT userID FROM users WHERE email=:email");
 	            $query->bindParam("email", $email, PDO::PARAM_STR);
 	            $query->execute();
@@ -65,15 +64,20 @@
 		function Login($username, $password){
 			try{
 				$db = DB();
-				$query = $db->prepare("SELECT userID FROM users WHERE (username = :username OR email = :username) AND password = :password");
+				$query = $db->prepare("SELECT userID, password, AdminStatus FROM users WHERE (username = :username OR email = :username)");
 				$query->bindParam("username", $username, PDO::PARAM_STR);
-				$enc_password = hash('sha256', $password);
-				$query->bindParam("password", $enc_password, PDO::PARAM_STR);
+				// $enc_password = hash('sha256', $password);
+				// $query->bindParam("password", $enc_password, PDO::PARAM_STR);
 				$query->execute();
 
 				if($query->rowCount() > 0){
 					$result = $query->fetch(PDO::FETCH_OBJ);
-					return $result->userID;
+					$accountPassword = $result->password;
+					$verified = password_verify($password, $accountPassword);
+
+					if($verified){
+						return array('userID' => $result->userID, 'AdminStatus' => $result->AdminStatus);
+					}
 				}
 				else{
 					return false;
@@ -87,8 +91,8 @@
 		//Obtain user details based off user ID
 		function UserDetails($userID){
 			try {
-	            $db = DB();
-	            $query = $db->prepare("SELECT userID, name, username, email FROM users WHERE userID = :userID");
+				$db = DB();
+	            $query = $db->prepare("SELECT userID, name, username, email, AdminStatus FROM users WHERE userID = :userID");
 	            $query->bindParam("userID", $userID, PDO::PARAM_STR);
 	            $query->execute();
 	            if ($query->rowCount() > 0) {

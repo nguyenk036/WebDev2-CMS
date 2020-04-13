@@ -1,8 +1,6 @@
 <?php
 
-	require 'authenticate.php';
-	require 'db_connect.php';
-
+	include 'session_connection.php';
 	include 'ImageResize.php';
 	use \Gumlet\ImageResize;
 
@@ -15,7 +13,7 @@
 
 	function file_upload_path($original_filename, $upload_subfolder_name = 'savedImages\movieImages') {
 	       $current_folder 		= dirname(__FILE__);
-	       $title_no_whitespace = preg_replace("/[^a-zA-Z0-9]/", "", $_POST['title'])
+	       $title_no_whitespace = preg_replace("/[^a-zA-Z0-9]/", "", $_POST['title']);
 	       $new_file_name 		= $title_no_whitespace . '.' . pathinfo($original_filename, PATHINFO_EXTENSION);
 	       
 	       $path_segments 		= [$current_folder, $upload_subfolder_name, $new_file_name];
@@ -105,36 +103,40 @@
 </head>
 <body class="bg-dark text-light">
 	<?php include('navbar.php'); ?>
+	<?php if($_SESSION['user_id']): ?>
 
-	<form method="post" action="newmovie.php" enctype="multipart/form-data">
-		<div>
-			<label for="title" class="d-block m-2">Title</label>
-        	<input id="title" name="title" class="d-block m-2">
-		</div>
-        <div>
-        	<label for="description" class="d-block m-2">Description</label>
-        	<textarea id="description" name="description" cols="68" class="d-block m-2" style="resize: none;"></textarea>
-        </div>
-        <div>
-			<label for="genre" class="d-block m-2">Genre</label>
-        	<select name="genre" class="d-block m-2">
-        		<?php foreach ($statement as $genre): ?>
-        			<option value="<?php echo $genre[0] ?>"><?php echo $genre[1] ?></option>
-        		<?php endforeach ?>
-        	</select>
-		</div>
-		<div>
-			<label for="image" class="d-block m-2">Filename:</label>
-        	<input type="file" name="image" id="image" class="d-block m-2" />
-		</div>
-        <div id="buttons">
-        	<input type="submit" class="d-block m-2">
-        </div>
-        
-    </form>
+		<form method="post" action="newmovie.php" enctype="multipart/form-data">
+			<div>
+				<label for="title" class="d-block m-2">Title</label>
+	        	<input id="title" name="title" class="d-block m-2">
+			</div>
+	        <div>
+	        	<label for="description" class="d-block m-2">Description</label>
+	        	<textarea id="description" name="description" cols="68" class="d-block m-2" style="resize: none;"></textarea>
+	        </div>
+	        <div>
+				<label for="genre" class="d-block m-2">Genre</label>
+	        	<select name="genre" class="d-block m-2">
+	        		<?php foreach ($statement as $genre): ?>
+	        			<option value="<?php echo $genre[0] ?>"><?php echo $genre[1] ?></option>
+	        		<?php endforeach ?>
+	        	</select>
+			</div>
+			<div>
+				<label for="image" class="d-block m-2">Filename:</label>
+	        	<input type="file" name="image" id="image" class="d-block m-2" />
+			</div>
+	        <div id="buttons">
+	        	<input type="submit" class="d-block m-2">
+	        </div>
+	        
+	    </form>
 
-    <h4 class="m-2"><?= $statusMessage ?></h4>
+	    <h4 class="m-2"><?= $statusMessage ?></h4>
 
-	<a href="movies.php" class="btn btn-dark d-block m-2">Return to Movies</a>
+		<a href="movies.php" class="btn btn-dark d-block m-2">Return to Movies</a>
+	<?php else: ?>
+		<?php header("Location: login.php"); ?>
+	<?php endif ?>
 </body>
 </html>

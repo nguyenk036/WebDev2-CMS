@@ -1,6 +1,6 @@
 <?php
 
-	require 'db_connect.php';
+	include 'session_connection.php';
 
 	$getImageRef = "SELECT ImageRef FROM movie WHERE MovieID = " . $_GET['id'];
 	$imgref = $db->prepare($getImageRef);

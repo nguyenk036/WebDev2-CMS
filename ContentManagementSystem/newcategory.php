@@ -1,7 +1,5 @@
 <?php
-
-	require 'authenticate.php';
-	require 'db_connect.php';
+	include 'session_connection.php';
 
 	$statusMessage = "";
 
@@ -34,19 +32,22 @@
 </head>
 <body class="bg-dark">
 	<?php include('navbar.php'); ?>
+	<?php if($_SESSION['user_id'] && $user->AdminStatus > 0): ?>
+		<form method="post" action="newcategory.php">
+			<div>
+				<label for="category" class="text-light d-block m-2">Category Name</label>
+	        	<input id="category" name="category" class="d-block m-2">
+			</div>
+	       
+	        <div id="buttons">
+	        	<input type="submit" class="m-2">
+	        </div>
+	    </form>
 
-	<form method="post" action="newcategory.php">
-		<div>
-			<label for="category" class="text-light d-block m-2">Category Name</label>
-        	<input id="category" name="category" class="d-block m-2">
-		</div>
-       
-        <div id="buttons">
-        	<input type="submit" class="m-2">
-        </div>
-    </form>
-
-    <h4 class="text-light m-2"><?= $statusMessage ?></h4>
-    <a href="movies.php" class="btn btn-dark d-block m-2">Return to Movies</a>
+	    <h4 class="text-light m-2"><?= $statusMessage ?></h4>
+	    <a href="movies.php" class="btn btn-dark d-block m-2">Return to Movies</a>
+    <?php else: ?>
+    	<?php header("Location: login.php"); ?>
+    <?php endif ?>
 </body>
 </html>

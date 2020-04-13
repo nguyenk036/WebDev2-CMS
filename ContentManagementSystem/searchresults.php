@@ -1,5 +1,6 @@
 <?php
-	require('db_connect.php');
+
+	include 'session_connection.php';
 
 	// Sets the initial page to 1 upon initial load
 	if(!isset($_GET['page'])){

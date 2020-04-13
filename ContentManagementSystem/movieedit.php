@@ -1,8 +1,6 @@
 <?php
 
-	require 'authenticate.php';
-	require 'db_connect.php';
-
+	include 'session_connection.php';
 	include 'ImageResize.php';
 	use \Gumlet\ImageResize;
 
@@ -152,46 +150,50 @@
 <body class="bg-dark text-light">
 
 	<?php include('navbar.php'); ?>
-	<?php if($id): ?>
-		<form method="post" action="movieedit.php" enctype="multipart/form-data">
-			<input type="hidden" name="id" value="<?= $post['MovieID'] ?>">
-			<div>
-				<label for="title" class="d-block m-2">Title</label>
-	        	<input id="title" name="title" class="d-block m-2" value="<?= $post['MovieTitle'] ?>">
-			</div>
-	        <div>
-	        	<label for="description" class="d-block m-2">Description</label>
-	        	<textarea id="description" class="d-block m-2" name="description" cols="68" style="resize: none;"><?= $post['MovieDescription'] ?></textarea>
-	        </div>
-	        <div>
-				<label for="genre" class="d-block m-2">Genre</label>
-	        	<select name="genre" class="d-block m-2">
-	        		<?php foreach ($statementarray as $genre): ?>
-	        			<option value="<?php $genre['GenreID'] ?>"><?php echo $genre['CategoryName'] ?></option>
-	        		<?php endforeach ?>
-	        	</select>
-			</div>
-			<div>
-				<label for="image" class="d-block m-2">Filename:</label>
-	        	<input type="file" name="image" id="image" class="d-block m-2 btn btn-dark"/>
-			</div>
-			<?php if($rowImage['ImageRef'] != NULL): ?>
+	<?php if($_SESSION['user_id'] && $user->AdminStatus > 0): ?>
+		<?php if($id): ?>
+			<form method="post" action="movieedit.php" enctype="multipart/form-data">
+				<input type="hidden" name="id" value="<?= $post['MovieID'] ?>">
 				<div>
-					<label for="checkbox" class="m-2">Remove <?= $rowImage['ImageRef'] ?>?</label>
-	        		<input type="checkbox" name="checkbox" class="m-2" value="Checked">
+					<label for="title" class="d-block m-2">Title</label>
+		        	<input id="title" name="title" class="d-block m-2" value="<?= $post['MovieTitle'] ?>">
 				</div>
-			<?php endif ?>
-	        <div id="buttons">
-	        	<input type="submit" name="action" value="Update" class="m-2 btn btn-dark">
-	        	<input type="submit" name="action" value="Delete" class="m-2 btn btn-dark">
-	        </div>
-	    </form>
-	<?php elseif(!$id || !$title || !$description): ?>
-		<p>ERROR: Title and/or content cannot be empty, or may contain inappropriate characters.  Please try again.</p>
-	<?php endif ?>
+		        <div>
+		        	<label for="description" class="d-block m-2">Description</label>
+		        	<textarea id="description" class="d-block m-2" name="description" cols="68" style="resize: none;"><?= $post['MovieDescription'] ?></textarea>
+		        </div>
+		        <div>
+					<label for="genre" class="d-block m-2">Genre</label>
+		        	<select name="genre" class="d-block m-2">
+		        		<?php foreach ($statementarray as $genre): ?>
+		        			<option value="<?php $genre['GenreID'] ?>"><?php echo $genre['CategoryName'] ?></option>
+		        		<?php endforeach ?>
+		        	</select>
+				</div>
+				<div>
+					<label for="image" class="d-block m-2">Filename:</label>
+		        	<input type="file" name="image" id="image" class="d-block m-2 btn btn-dark"/>
+				</div>
+				<?php if($rowImage['ImageRef'] != NULL): ?>
+					<div>
+						<label for="checkbox" class="m-2">Remove <?= $rowImage['ImageRef'] ?>?</label>
+		        		<input type="checkbox" name="checkbox" class="m-2" value="Checked">
+					</div>
+				<?php endif ?>
+		        <div id="buttons">
+		        	<input type="submit" name="action" value="Update" class="m-2 btn btn-dark">
+		        	<input type="submit" name="action" value="Delete" class="m-2 btn btn-dark">
+		        </div>
+		    </form>
+		<?php elseif(!$id || !$title || !$description): ?>
+			<p>ERROR: Title and/or content cannot be empty, or may contain inappropriate characters.  Please try again.</p>
+		<?php endif ?>
 
-	<p><?= $errorMessage ?></p>
-	
-	<a href="movies.php" class="btn btn-dark d-block m-2">Return to Movies</a>
+		<p><?= $errorMessage ?></p>
+		
+		<a href="movies.php" class="btn btn-dark d-block m-2">Return to Movies</a>
+	<?php else: ?>
+		<?php header("Location: login.php"); ?>
+	<?php endif ?>
 </body>
 </html>

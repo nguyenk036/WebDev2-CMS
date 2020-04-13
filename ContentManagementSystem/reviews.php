@@ -1,5 +1,5 @@
 <?php
-
+	include 'session_connection.php';
 ?>
 
 <!DOCTYPE html>

@@ -1,9 +1,22 @@
 <?php
 
 	define('DB_DSN', 'mysql:host=localhost;dbname=webflix_reviews;charset=utf8');
-	define('DB_USER','admin');
-    define('DB_PASS','testadmin1');     
+	define('DB_USER','root');
+    define('DB_PASS','');     
 
-    $db = new PDO(DB_DSN, DB_USER, DB_PASS);
+    function DB(){
+    	try{
 
+    		$db = new PDO(DB_DSN, DB_USER, DB_PASS);
+    		return $db;
+
+    	}
+    	catch(PDOException $e){
+
+    		return "Error: " . $e->getMessage();
+    		die();
+    		
+    	}
+    }
+    
 ?>
