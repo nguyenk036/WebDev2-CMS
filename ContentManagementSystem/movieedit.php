@@ -96,7 +96,7 @@
 
 	    //Descriptions wont update..
 		$query 		= "UPDATE movie SET GenreID = :genre, MovieTitle = :title, MovieDescription = :description WHERE MovieID = :id";
-		$statement 	= $db->prepare($query1);
+		$statement 	= $db->prepare($query);
 		$statement->bindValue(':title', $title);
 		$statement->bindValue(':description', $description);
 		$statement->bindValue(':id', $id, PDO::PARAM_INT);

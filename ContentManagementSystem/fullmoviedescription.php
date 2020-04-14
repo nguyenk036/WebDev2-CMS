@@ -39,6 +39,16 @@
 
 		echo "<meta http-equiv='refresh' content='0'>";
 	}
+
+	if(isset($_POST) && isset($_POST['action'])){
+		$commentid = filter_input(INPUT_POST, 'action', FILTER_SANITIZE_NUMBER_INT);
+
+		$deleteComment = $db->prepare("DELETE FROM Comments WHERE CommentID = :commentid");
+		$deleteComment->bindValue(':commentid', $commentid);
+		$deleteComment->execute();
+
+		echo "<meta http-equiv='refresh' content='0'>";
+	}
 	
 ?>
 
@@ -90,6 +100,11 @@
 					<h5><?= $row['Name']?></h6>
 					<p>Posted: <?= $row['CommentDate'] ?></p>
 					<p><?= $row['Comment'] ?></p>
+					<?php if(isset($_SESSION['user_id']) && isset($_SESSION['adminstatus']) > 0): ?>
+						<form method="post" action="fullmoviedescription.php?id=<?= $movie['MovieID'] ?>">
+							<button type="submit" name="action" value="<?= $row['CommentID'] ?>" class="btn btn-danger btn-sm">Delete</button>
+						</form>
+					<?php endif ?>
 				</div>
 			<?php endwhile ?>
 

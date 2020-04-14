@@ -67,11 +67,11 @@
                         <input type="text" name="username" class="form-control"/>
                     </div>
                     <div class="form-group">
-                        <label for="">Password</label>
+                        <label for="password">Password</label>
                         <input type="password" name="password" class="form-control"/>
                     </div>
                     <div class="form-group">
-                        <label>Confirm Password</label>
+                        <label for="confirmpassword">Confirm Password</label>
                         <input type="password" name="confirmpassword" class="form-control">
                     </div>
                     <div class="form-group">
