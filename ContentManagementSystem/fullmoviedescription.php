@@ -100,7 +100,7 @@
 					<h5><?= $row['Name']?></h6>
 					<p>Posted: <?= $row['CommentDate'] ?></p>
 					<p><?= $row['Comment'] ?></p>
-					<?php if(isset($_SESSION['user_id']) && isset($_SESSION['adminstatus']) > 0): ?>
+					<?php if(isset($_SESSION['user_id']) && $user->AdminStatus > 0): ?>
 						<form method="post" action="fullmoviedescription.php?id=<?= $movie['MovieID'] ?>">
 							<button type="submit" name="action" value="<?= $row['CommentID'] ?>" class="btn btn-danger btn-sm">Delete</button>
 						</form>

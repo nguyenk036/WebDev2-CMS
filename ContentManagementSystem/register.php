@@ -23,9 +23,8 @@
             $register_error_message = 'Username is already in use!';
         } else {
             $user_id = $app->Register($_POST['name'], $_POST['email'], $_POST['username'], $_POST['password']);
-            // set session and redirect user to the profile page
-            $_SESSION['user_id'] = $user_id;
-            header("Location: profile.php");
+
+            header("Location: login.php");
         }
     }
 ?>

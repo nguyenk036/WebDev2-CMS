@@ -22,6 +22,7 @@
 
 	<?php if($_SESSION['user_id'] && $user->AdminStatus > 0): ?>
 		<h2 class="m-2">All Users</h2>
+		<a href="register.php" class="btn btn-primary m-2">+ Add User</a>
 		<table class="table table-hover table-dark">
 			<tr>
 				<th>Username</th>

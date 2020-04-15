@@ -32,19 +32,22 @@
 			$updateQuery->execute();
 		}
 	}
-	else if($_POST && $_POST['action'] == 'Delete'){
-		$id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-		$deleteQuery = $db->prepare("DELETE FROM users WHERE UserID = :id");
+
+	if(isset($_POST['action']) && $_POST['action'] == 'Delete'){
+		$id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+		$query = "DELETE FROM users WHERE UserID = :id";
+		$deleteQuery = $db->prepare($query);
 		$deleteQuery->bindValue(':id', $id, PDO::PARAM_INT);
 		$deleteQuery->execute();
 
 		header("Location: allusers.php");
-		exit;
 	}
-	else if(isset($_GET['uid'])){
-		$uid = filter_input(INPUT_GET, 'uid', FILTER_SANITIZE_NUMBER_INT);
 
-		$getUser = $db->prepare("SELECT * FROM users WHERE UserID = :uid");
+	
+	if(isset($_GET['uid'])){
+		$uid = filter_input(INPUT_GET, 'uid', FILTER_SANITIZE_NUMBER_INT);
+		$query = "SELECT * FROM users WHERE UserID = :uid";
+		$getUser = $db->prepare($query);
 		$getUser->bindValue(':uid', $uid, PDO::PARAM_INT);
 		$getUser->execute();
 
