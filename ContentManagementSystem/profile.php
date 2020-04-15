@@ -22,10 +22,9 @@
 	<?php include('navbar.php'); ?>
 
 	<div class="container">
-		<div class="well">
-			<h2>Profile</h2>
-			<h3>Welcome <?php echo $user->name ?></h3>
-			<a href="logout.php" class="btn btn-primary">Logout</a>
+		<div class="well m-2">
+			<h2>Welcome <?php echo $user->name ?></h2>
+			<a href="logout.php" class="btn btn-primary m-2">Logout</a>
 		</div>
 	</div>
 </body>
